@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: udr
+spec:
+  selector:
+    matchLabels:
+      app: udr
+  replicas: 1
+  template: # template for the pods
+    metadata:
+      labels:
+        app: udr
+    spec:
+      containers:
+      - name: udr
+        image: attilajak/udr-app:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: DUMMY
+          value: production-microservice
+        imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: udsf
+spec:
+  selector:
+    matchLabels:
+      app: udsf
+  replicas: 1
+  template: # template for the pods
+    metadata:
+      labels:
+        app: udsf
+    spec:
+      containers:
+      - name: udsf
+        image: attilajak/udsf-app:latest
+        env:
+        - name: DUMMY
+          value: production-microservice
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: udr-service
+spec:
+  # This defines which pods are going to be represented by this Service
+  # The service becomes a network endpoint for either other services
+  # or maybe external users to connect to (eg browser)
+  selector:
+    app: udr
+  ports:
+    - name: http
+      port: 80
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: udsf-service
+
+spec:
+  # This defines which pods are going to be represented by this Service
+  # The service becomes a network endpoint for either other services
+  # or maybe external users to connect to (eg browser)
+  selector:
+    app: udsf
+  ports:
+    - name: http
+      port: 80
+  type: ClusterIP
