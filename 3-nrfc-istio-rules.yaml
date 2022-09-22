@@ -1,0 +1,54 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: example.com
+spec:
+  hosts: 
+  - example.com 
+  endpoints:
+  - address: 34.125.33.147
+  ports: 
+  - number: 80
+    name: http-port 
+    protocol: HTTP 
+    targetPort: 443
+  - number: 443
+    name: https-port 
+    protocol: HTTPS 
+  resolution: STATIC
+  location: MESH_EXTERNAL
+--- 
+apiVersion: networking.istio.io/v1alpha3 
+kind: DestinationRule 
+metadata: 
+  name: example.com 
+spec: 
+  host: example.com 
+  trafficPolicy: 
+    portLevelSettings: 
+    - port: 
+        number: 80 
+      tls: 
+        mode: SIMPLE
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pods-list
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["list", "watch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pods-list
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: pods-list
+  apiGroup: rbac.authorization.k8s.io
