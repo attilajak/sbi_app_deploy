@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: udr
-        image: attilajak/udr-app:probe
+        image: attilajak/udr-app:http2
         ports:
         - containerPort: 80
         readinessProbe:
@@ -45,7 +45,7 @@ spec:
     spec:
       containers:
       - name: udsf
-        image: attilajak/udsf-app:latest
+        image: attilajak/udsf-app:http2
         env:
         - name: DUMMY
           value: production-microservice
