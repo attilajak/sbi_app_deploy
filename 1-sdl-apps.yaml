@@ -46,6 +46,15 @@ spec:
       containers:
       - name: udsf
         image: attilajak/udsf-app:http2
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            scheme: HTTP
+            path: /nudsf-dr/v1/Realm01/Storage01/records/UserRecordValue000000001/blocks
+            port: 80
+          initialDelaySeconds: 20
+          periodSeconds: 5
         env:
         - name: DUMMY
           value: production-microservice
